@@ -9,6 +9,7 @@ base_square_width = 50;
 
 module duplicate_on_axis(num, el_size, width, axis) {
   gap = (width - (num * el_size)) / (num - 1);
+  echo(gap)
   for (dy = [0:num - 1]) {
     offset = (el_size / 2) + (dy * (el_size + gap));
     s = axis[1] == "-" ? -1 : 1;
@@ -17,6 +18,7 @@ module duplicate_on_axis(num, el_size, width, axis) {
       axis[0] == "y" ? s * 1 * offset : 0,
       axis[0] == "z" ? s * 1 * offset : 0,
     ];
+    echo(v)
     translate(v)
       children(0);
   }
@@ -92,7 +94,7 @@ module final_height_helper() {
   color("blue", 0.4) translate([-5, -5, 0]) cube([10, 1, max_height]);
 }
 
-final_height_helper();
+*final_height_helper();
 
 module level_one_base() {
   carrier_width = 30;
@@ -123,7 +125,7 @@ translate([0, 0, 46.5]) level_one_base();
 
 module level_two_legs() {
   module leg() {
-    translate([(base_square_width / 2) - 8.5 - plate_y, 0, plate_z * 2]) cube([plate_y, plate_z, 90]);
+    translate([(base_square_width / 2) - 8.5 - plate_y - plate_y - 1.66666, 0, plate_z * 2]) cube([plate_y, plate_z, 90]);
   }
 
   module shorter_leg() {
@@ -138,24 +140,32 @@ color("purple") level_two_legs();
 
 module level_two_base() {
   module grid() {
-    duplicate_on_axis(num=4, el_size=plate_y, width=30, axis="x") {
+   color("green") duplicate_on_axis(num=4, el_size=plate_y, width=30, axis="x") {
       cube(size=[plate_y, 33, plate_z]);
+    }
+
+    color("#1f1") translate([plate_y/2,-plate_y/2, -plate_z]) duplicate_on_axis(num=2, el_size=plate_y, width=33, axis="y") {
+      cube(size=[30, plate_y, plate_z]);
     }
   }
 
-  color("green") grid();
+   grid();
 }
 
-translate([-5, 25, 90 + plate_z * 2]) rotate([0, 0, -60]) level_two_base();
+translate([-5, 32, 90 + plate_z * 2]) rotate([0, 0, -90]) level_two_base();
 
 module level_there_base() {
   module grid() {
-    duplicate_on_axis(num=4, el_size=plate_y, width=30, axis="x") {
+   color("silver") duplicate_on_axis(num=4, el_size=plate_y, width=plate_y*4 + 4, axis="x") {
       cube(size=[plate_y, 33, plate_z]);
+    }
+
+    color("#823") translate([plate_y/2,-plate_y/2, -plate_z]) duplicate_on_axis(num=2, el_size=plate_y, width=33, axis="y") {
+      cube(size=[32, plate_y, plate_z]);
     }
   }
 
-  color("silver") grid();
+   grid();
 }
 
 translate([-base_square_width + plate_y, 10, 120 + plate_z * 2]) rotate([0, 0, -10]) level_there_base();
